@@ -33,29 +33,29 @@ RSpec.describe Orders::CreateOrder, type: :interactor do
     end
 
     context "with invalid params" do
-      it "raises a record invalid error when customer_name is missing" do
+      it "raises a contract validation error when customer_name is missing" do
         params = { customer_email: "john@example.com", total_amount: 99.99 }
 
-        expect { described_class.with(params: params) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { described_class.with(params: params) }.to raise_error(ContractValidationError)
       end
 
-      it "raises a record invalid error when customer_email is invalid" do
+      it "raises a contract validation error when customer_email is invalid" do
         params = { customer_name: "John", customer_email: "invalid", total_amount: 99.99 }
 
-        expect { described_class.with(params: params) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { described_class.with(params: params) }.to raise_error(ContractValidationError)
       end
 
-      it "raises a record invalid error when total_amount is negative" do
+      it "raises a contract validation error when total_amount is negative" do
         params = { customer_name: "John", customer_email: "john@example.com", total_amount: -10 }
 
-        expect { described_class.with(params: params) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { described_class.with(params: params) }.to raise_error(ContractValidationError)
       end
 
       it "includes validation messages in the error" do
         params = { customer_email: "john@example.com", total_amount: 99.99 }
 
-        expect { described_class.with(params: params) }.to raise_error(ActiveRecord::RecordInvalid) do |error|
-          expect(error.message).to include("Customer name")
+        expect { described_class.with(params: params) }.to raise_error(ContractValidationError) do |error|
+          expect(error.errors).to have_key(:customer_name)
         end
       end
     end

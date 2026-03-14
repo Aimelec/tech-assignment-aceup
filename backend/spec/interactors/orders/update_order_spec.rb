@@ -12,7 +12,7 @@ RSpec.describe Orders::UpdateOrder, type: :interactor do
       end
 
       it "updates the order status" do
-        updated = described_class.with(id: order.id, params: { status: :confirmed })
+        updated = described_class.with(id: order.id, params: { status: "confirmed" })
 
         expect(updated).to be_confirmed
       end
@@ -23,19 +23,33 @@ RSpec.describe Orders::UpdateOrder, type: :interactor do
         expect(updated).to be_a(Order)
         expect(updated).to be_persisted
       end
+
+      it "allows partial updates" do
+        original_email = order.customer_email
+        updated = described_class.with(id: order.id, params: { customer_name: "New Name" })
+
+        expect(updated.customer_name).to eq("New Name")
+        expect(updated.customer_email).to eq(original_email)
+      end
     end
 
     context "with invalid params" do
-      it "raises a record invalid error when customer_email is invalid" do
+      it "raises a contract validation error when customer_email is invalid" do
         expect {
           described_class.with(id: order.id, params: { customer_email: "invalid" })
-        }.to raise_error(ActiveRecord::RecordInvalid)
+        }.to raise_error(ContractValidationError)
       end
 
-      it "raises a record invalid error when total_amount is negative" do
+      it "raises a contract validation error when total_amount is negative" do
         expect {
           described_class.with(id: order.id, params: { total_amount: -10 })
-        }.to raise_error(ActiveRecord::RecordInvalid)
+        }.to raise_error(ContractValidationError)
+      end
+
+      it "raises a contract validation error when status is invalid" do
+        expect {
+          described_class.with(id: order.id, params: { status: "invalid_status" })
+        }.to raise_error(ContractValidationError)
       end
     end
 
