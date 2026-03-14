@@ -45,3 +45,7 @@ group :development, :test do
   gem "shoulda-matchers", "~> 6.0"
   gem "byebug", "~> 11.1"
 end
+
+group :development do
+  gem "annotate", "~> 3.2"
+end
