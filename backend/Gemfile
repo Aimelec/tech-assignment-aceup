@@ -45,5 +45,3 @@ group :development, :test do
   gem "shoulda-matchers", "~> 6.0"
   gem "byebug", "~> 11.1"
 end
-
-
