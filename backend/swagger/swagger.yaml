@@ -1,0 +1,191 @@
+---
+openapi: 3.0.1
+info:
+  title: AceUp Orders API
+  version: '1.0'
+  description: Order management API following JSON:API specification
+paths:
+  "/api/orders":
+    post:
+      summary: Creates an order
+      tags:
+      - Orders
+      parameters: []
+      responses:
+        '201':
+          description: order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/order_output"
+                required:
+                - data
+        '422':
+          description: validation error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/order_input"
+  "/api/orders/{id}":
+    put:
+      summary: Updates an order
+      tags:
+      - Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: order updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/order_output"
+                required:
+                - data
+        '422':
+          description: validation error
+        '404':
+          description: order not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/order_update_input"
+    delete:
+      summary: Deletes an order
+      tags:
+      - Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: order deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/order_output"
+                required:
+                - data
+        '404':
+          description: order not found
+servers:
+- url: http://localhost:3000
+  description: Development server
+components:
+  schemas:
+    order_output:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          example: order
+        attributes:
+          type: object
+          properties:
+            customer_name:
+              type: string
+              example: John Doe
+            customer_email:
+              type: string
+              example: john@example.com
+            description:
+              type: string
+              example: 2x Margherita Pizza, 1x Tiramisu
+              nullable: true
+            total_amount:
+              type: string
+              example: '99.99'
+            status:
+              type: string
+              enum:
+              - pending
+              - confirmed
+              - completed
+              - cancelled
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+          required:
+          - customer_name
+          - customer_email
+          - total_amount
+          - status
+          - created_at
+          - updated_at
+      required:
+      - id
+      - type
+      - attributes
+    order_input:
+      type: object
+      properties:
+        order:
+          type: object
+          properties:
+            customer_name:
+              type: string
+              example: John Doe
+            customer_email:
+              type: string
+              example: john@example.com
+            description:
+              type: string
+              example: 2x Margherita Pizza, 1x Tiramisu
+            total_amount:
+              type: number
+              example: 99.99
+            status:
+              type: string
+              enum:
+              - pending
+              - confirmed
+              - completed
+              - cancelled
+          required:
+          - customer_name
+          - customer_email
+          - total_amount
+    order_update_input:
+      type: object
+      properties:
+        order:
+          type: object
+          properties:
+            customer_name:
+              type: string
+            customer_email:
+              type: string
+            description:
+              type: string
+            total_amount:
+              type: number
+            status:
+              type: string
+              enum:
+              - pending
+              - confirmed
+              - completed
+              - cancelled
