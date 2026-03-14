@@ -2,6 +2,32 @@ require "swagger_helper"
 
 RSpec.describe "Orders API", type: :request do
   path "/api/orders" do
+    get "Lists orders" do
+      tags "Orders"
+      produces "application/json"
+      parameter name: :page, in: :query, type: :integer, required: false, description: "Page number"
+
+      response "200", "orders listed" do
+        schema collection_response_schema(:order_output)
+
+        let!(:orders) { create_list(:order, 7) }
+        let(:page) { 1 }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expected_orders = Order.recent.page(1).per(5)
+          expected = JSON.parse(OrderSerializer.new(expected_orders).serializable_hash.to_json)
+
+          expect(data["data"]).to eq(expected["data"])
+          expect(data["meta"]).to eq(
+            "current_page" => 1,
+            "total_pages" => 2,
+            "total_count" => 7
+          )
+        end
+      end
+    end
+
     post "Creates an order" do
       tags "Orders"
       consumes "application/json"

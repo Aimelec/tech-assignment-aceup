@@ -4,9 +4,14 @@ class ApplicationController < ActionController::API
 
   private
 
-  def serialize(resource, serializer = nil)
-    serializer ||= "#{resource.class}Serializer".constantize
+  def serialize(resource)
+    serializer = "#{resource.class}Serializer".constantize
     serializer.new(resource).serializable_hash
+  end
+
+  def serialize_collection(resources, meta: {})
+    serializer = "#{resources.klass}Serializer".constantize
+    serializer.new(resources).serializable_hash.merge(meta: meta)
   end
 
   def render_not_found(exception)

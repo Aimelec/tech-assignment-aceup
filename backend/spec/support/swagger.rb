@@ -24,9 +24,18 @@ module Swagger
         data: {
           type: :array,
           items: { "$ref": "#/components/schemas/#{model}" }
+        },
+        meta: {
+          type: :object,
+          properties: {
+            current_page: { type: :integer, example: 1 },
+            total_pages: { type: :integer, example: 2 },
+            total_count: { type: :integer, example: 7 }
+          },
+          required: [ :current_page, :total_pages, :total_count ]
         }
       },
-      required: [ :data ]
+      required: [ :data, :meta ]
     }
   end
 end
