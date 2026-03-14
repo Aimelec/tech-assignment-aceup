@@ -33,6 +33,21 @@ services:
     networks:
       - aceup
 
+  sidekiq:
+    build:
+      context: ./backend
+    working_dir: /rails
+    command: ["bundle", "exec", "sidekiq"]
+    volumes:
+      - ./backend:/rails
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - aceup
+
   db:
     image: postgres:15-alpine
     restart: always

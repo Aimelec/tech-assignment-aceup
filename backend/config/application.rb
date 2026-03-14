@@ -43,5 +43,8 @@ module Backend
 
     # Disable host authorization — CORS handles origin control for this API-only app.
     config.hosts.clear
+
+    # Use Sidekiq as the Active Job queue adapter.
+    config.active_job.queue_adapter = :sidekiq
   end
 end

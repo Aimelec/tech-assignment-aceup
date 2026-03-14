@@ -30,6 +30,11 @@ RSpec.describe Orders::CreateOrder, type: :interactor do
 
         expect(order).to be_pending
       end
+
+      it "enqueues a confirmation email job" do
+        expect { described_class.with(params: params) }
+          .to have_enqueued_job(SendOrderConfirmationJob)
+      end
     end
 
     context "with invalid params" do

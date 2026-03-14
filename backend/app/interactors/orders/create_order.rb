@@ -10,10 +10,16 @@ module Orders
 
     def execute
       validate!
-      Order.create!(@params)
+      order = Order.create!(@params)
+      send_confirmation_email(order)
+      order
     end
 
     private
+
+    def send_confirmation_email(order)
+      SendOrderConfirmationJob.perform_later(order.id)
+    end
 
     def validate!
       result = CreateOrderContract.new.call(@params)

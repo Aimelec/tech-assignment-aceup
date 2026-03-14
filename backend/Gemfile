@@ -38,6 +38,9 @@ gem "dry-validation", "~> 1.10"
 # Pagination [https://github.com/kaminari/kaminari]
 gem "kaminari", "~> 1.2"
 
+# Background processing [https://github.com/sidekiq/sidekiq]
+gem "sidekiq", "~> 7.0"
+
 # Swagger API documentation [https://github.com/rswag/rswag]
 gem "rswag-api", "~> 2.16"
 gem "rswag-ui", "~> 2.16"
@@ -62,4 +65,5 @@ end
 
 group :development do
   gem "annotate", "~> 3.2"
+  gem "letter_opener", "~> 1.10"
 end
