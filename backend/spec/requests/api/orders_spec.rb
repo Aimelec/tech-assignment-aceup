@@ -1,6 +1,39 @@
 require "swagger_helper"
 
 RSpec.describe "Orders API", type: :request do
+  path "/api/orders/stats" do
+    get "Returns order stats" do
+      tags "Orders"
+      produces "application/json"
+
+      response "200", "stats returned" do
+        schema object_response_schema(:order_stats_output)
+
+        let!(:pending_orders) { create_list(:order, 2, status: :pending, total_amount: 10.00) }
+        let!(:confirmed_orders) { create_list(:order, 3, status: :confirmed, total_amount: 20.00) }
+        let!(:completed_orders) { create_list(:order, 4, status: :completed, total_amount: 30.00) }
+        let!(:cancelled_orders) { create_list(:order, 1, status: :cancelled, total_amount: 50.00) }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+
+          expect(data).to eq(
+            "data" => {
+              "type" => "stats",
+              "attributes" => {
+                "total_orders" => 10,
+                "cancelled_orders" => 1,
+                "completed_orders" => 4,
+                "in_progress_orders" => 5,
+                "total_revenue" => "200.0"
+              }
+            }
+          )
+        end
+      end
+    end
+  end
+
   path "/api/orders" do
     get "Lists orders" do
       tags "Orders"

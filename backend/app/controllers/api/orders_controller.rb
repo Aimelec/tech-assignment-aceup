@@ -1,5 +1,10 @@
 module Api
   class OrdersController < ApplicationController
+    def stats
+      stats = Orders::GetOrderStats.get
+      render json: { data: { type: "stats", attributes: stats } }, status: :ok
+    end
+
     def index
       result = Orders::ListOrders.with(page: params[:page])
       render json: serialize_collection(result[:orders], meta: result[:meta]), status: :ok

@@ -3,7 +3,8 @@ module Swagger
     {
       order_output: order_output_definition,
       order_input: order_input_definition,
-      order_update_input: order_update_input_definition
+      order_update_input: order_update_input_definition,
+      order_stats_output: order_stats_output_definition
     }
   end
 

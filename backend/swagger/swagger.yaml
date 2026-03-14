@@ -5,6 +5,18 @@ info:
   version: '1.0'
   description: Order management API following JSON:API specification
 paths:
+  "/api/orders/stats":
+    get:
+      summary: Returns order stats
+      tags:
+      - Orders
+      responses:
+        '200':
+          description: stats returned
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/dashboard_stats_output"
   "/api/orders":
     get:
       summary: Lists orders
@@ -231,3 +243,27 @@ components:
               - confirmed
               - completed
               - cancelled
+    dashboard_stats_output:
+      type: object
+      properties:
+        total_orders:
+          type: integer
+          example: 10
+        cancelled_orders:
+          type: integer
+          example: 1
+        completed_orders:
+          type: integer
+          example: 4
+        in_progress_orders:
+          type: integer
+          example: 5
+        total_revenue:
+          type: string
+          example: '200.0'
+      required:
+      - total_orders
+      - cancelled_orders
+      - completed_orders
+      - in_progress_orders
+      - total_revenue
