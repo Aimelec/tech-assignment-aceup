@@ -27,4 +27,8 @@ export const ordersApi = {
     })
     return response.data
   },
+
+  delete: async (id: string): Promise<void> => {
+    await client.delete(`${ORDERS_URL}/${id}`)
+  },
 }

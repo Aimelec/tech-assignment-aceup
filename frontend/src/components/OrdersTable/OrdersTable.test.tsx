@@ -1,10 +1,13 @@
-import { screen } from '@testing-library/react'
+import { screen, within, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { renderWithProviders } from '../../test/testUtils'
 import { OrdersTable } from './OrdersTable'
 
+const mockDelete = vi.fn()
+
 vi.mock('../../api/orders', () => ({
   ordersApi: {
+    delete: (...args: unknown[]) => mockDelete(...args),
     list: vi.fn().mockResolvedValue({
       data: [
         {
@@ -64,5 +67,27 @@ describe('OrdersTable', () => {
 
     expect(await screen.findByText('completed')).toBeInTheDocument()
     expect(screen.getByText('pending')).toBeInTheDocument()
+  })
+
+  it('shows confirmation modal and deletes on confirm', async () => {
+    mockDelete.mockResolvedValue({})
+
+    renderWithProviders(<OrdersTable />)
+
+    const row = await screen.findByText('John Smith')
+    const tableRow = row.closest('tr')!
+    const deleteButton = within(tableRow).getAllByRole('button')[1]!
+
+    fireEvent.click(deleteButton)
+
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).getByText('Delete order')).toBeInTheDocument()
+    expect(within(dialog).getByText('John Smith')).toBeInTheDocument()
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Delete' }))
+
+    await waitFor(() => {
+      expect(mockDelete).toHaveBeenCalledWith('1')
+    })
   })
 })

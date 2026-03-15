@@ -1,0 +1,8 @@
+.actions {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.row:hover .actions {
+  opacity: 1;
+}

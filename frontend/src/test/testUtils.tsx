@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { render, type RenderOptions } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MantineProvider } from '@mantine/core'
+import { ModalsProvider } from '@mantine/modals'
 import { Notifications } from '@mantine/notifications'
 
 function Providers({ children }: { children: ReactNode }) {
@@ -11,8 +12,10 @@ function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
-        <Notifications />
-        {children}
+        <ModalsProvider>
+          <Notifications />
+          {children}
+        </ModalsProvider>
       </MantineProvider>
     </QueryClientProvider>
   )

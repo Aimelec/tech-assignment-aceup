@@ -25,6 +25,7 @@ export function OrdersTable() {
             <Table.Th>Description</Table.Th>
             <Table.Th>Amount</Table.Th>
             <Table.Th>Status</Table.Th>
+            <Table.Th />
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
