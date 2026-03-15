@@ -16,7 +16,12 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/dashboard_stats_output"
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/order_stats_output"
+                required:
+                - data
   "/api/orders":
     get:
       summary: Lists orders
@@ -172,8 +177,7 @@ components:
             status:
               type: string
               enum:
-              - pending
-              - confirmed
+              - in_progress
               - completed
               - cancelled
             created_at:
@@ -214,8 +218,7 @@ components:
             status:
               type: string
               enum:
-              - pending
-              - confirmed
+              - in_progress
               - completed
               - cancelled
           required:
@@ -239,31 +242,39 @@ components:
             status:
               type: string
               enum:
-              - pending
-              - confirmed
+              - in_progress
               - completed
               - cancelled
-    dashboard_stats_output:
+    order_stats_output:
       type: object
       properties:
-        total_orders:
-          type: integer
-          example: 10
-        cancelled_orders:
-          type: integer
-          example: 1
-        completed_orders:
-          type: integer
-          example: 4
-        in_progress_orders:
-          type: integer
-          example: 5
-        total_revenue:
+        type:
           type: string
-          example: '200.0'
+          example: stats
+        attributes:
+          type: object
+          properties:
+            total_orders:
+              type: integer
+              example: 10
+            cancelled_orders:
+              type: integer
+              example: 1
+            completed_orders:
+              type: integer
+              example: 4
+            in_progress_orders:
+              type: integer
+              example: 5
+            total_revenue:
+              type: string
+              example: '200.0'
+          required:
+          - total_orders
+          - cancelled_orders
+          - completed_orders
+          - in_progress_orders
+          - total_revenue
       required:
-      - total_orders
-      - cancelled_orders
-      - completed_orders
-      - in_progress_orders
-      - total_revenue
+      - type
+      - attributes

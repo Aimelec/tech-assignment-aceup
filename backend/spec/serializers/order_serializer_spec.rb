@@ -8,7 +8,7 @@ RSpec.describe OrderSerializer, type: :serializer do
         customer_email: "john@example.com",
         description: "Test order",
         total_amount: 99.99,
-        status: :pending)
+        status: :in_progress)
     end
 
     let(:serialized) { described_class.new(order).serializable_hash }
@@ -25,7 +25,7 @@ RSpec.describe OrderSerializer, type: :serializer do
         customer_email: "john@example.com",
         description: "Test order",
         total_amount: "99.99",
-        status: "pending",
+        status: "in_progress",
         created_at: order.created_at,
         updated_at: order.updated_at
       )

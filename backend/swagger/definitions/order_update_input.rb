@@ -10,7 +10,7 @@ module Swagger
             customer_email: { type: :string },
             description: { type: :string },
             total_amount: { type: :number },
-            status: { type: :string, enum: %w[pending confirmed completed cancelled] }
+            status: { type: :string, enum: %w[in_progress completed cancelled] }
           }
         }
       }

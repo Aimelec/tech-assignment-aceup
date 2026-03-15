@@ -9,8 +9,7 @@ RSpec.describe "Orders API", type: :request do
       response "200", "stats returned" do
         schema object_response_schema(:order_stats_output)
 
-        let!(:pending_orders) { create_list(:order, 2, status: :pending, total_amount: 10.00) }
-        let!(:confirmed_orders) { create_list(:order, 3, status: :confirmed, total_amount: 20.00) }
+        let!(:in_progress_orders) { create_list(:order, 5, status: :in_progress, total_amount: 16.00) }
         let!(:completed_orders) { create_list(:order, 4, status: :completed, total_amount: 30.00) }
         let!(:cancelled_orders) { create_list(:order, 1, status: :cancelled, total_amount: 50.00) }
 

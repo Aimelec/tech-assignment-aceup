@@ -25,28 +25,28 @@ orders = [
     customer_email: "emily@example.com",
     description: "1x Chicago Deep Dish, 2x Margherita Pizza",
     total_amount: 45.99,
-    status: :confirmed
+    status: :in_progress
   },
   {
     customer_name: "David Brown",
     customer_email: "david@example.com",
     description: "2x Pepperoni Pizza, 1x Margherita Pizza",
     total_amount: 40.97,
-    status: :pending
+    status: :in_progress
   },
   {
     customer_name: "Lisa Taylor",
     customer_email: "lisa@example.com",
     description: "1x Chicago Deep Dish",
     total_amount: 18.99,
-    status: :pending
+    status: :in_progress
   },
   {
     customer_name: "James Anderson",
     customer_email: "james@example.com",
     description: "2x Chicago Deep Dish, 1x Pepperoni Pizza",
     total_amount: 51.97,
-    status: :confirmed
+    status: :in_progress
   }
 ]
 

@@ -7,7 +7,7 @@
 #  customer_email :string           not null
 #  description    :text
 #  total_amount   :decimal(10, 2)   default(0.0), not null
-#  status         :integer          default("pending"), not null
+#  status         :integer          default("in_progress"), not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #
@@ -17,7 +17,7 @@
 #  index_orders_on_status      (status)
 #
 class Order < ApplicationRecord
-  enum :status, { pending: 0, confirmed: 1, completed: 2, cancelled: 3 }
+  enum :status, { in_progress: 0, completed: 1, cancelled: 2 }
 
   validates :customer_name, presence: true
   validates :customer_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }

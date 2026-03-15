@@ -23,13 +23,13 @@ RSpec.describe Orders::UpdateOrderContract do
     end
 
     it "passes with only status" do
-      result = contract.call(status: "confirmed")
+      result = contract.call(status: "in_progress")
 
       expect(result).to be_success
     end
 
     it "passes with multiple fields" do
-      result = contract.call(customer_name: "New Name", status: "confirmed")
+      result = contract.call(customer_name: "New Name", status: "completed")
 
       expect(result).to be_success
     end
@@ -54,7 +54,7 @@ RSpec.describe Orders::UpdateOrderContract do
       result = contract.call(status: "invalid_status")
 
       expect(result).to be_failure
-      expect(result.errors[:status]).to include("must be one of: pending, confirmed, completed, cancelled")
+      expect(result.errors[:status]).to include("must be one of: in_progress, completed, cancelled")
     end
   end
 end

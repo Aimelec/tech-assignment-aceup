@@ -13,7 +13,7 @@ RSpec.describe Order, type: :model do
   end
 
   describe "enums" do
-    it { is_expected.to define_enum_for(:status).with_values(pending: 0, confirmed: 1, completed: 2, cancelled: 3) }
+    it { is_expected.to define_enum_for(:status).with_values(in_progress: 0, completed: 1, cancelled: 2) }
   end
 
   describe "scopes" do

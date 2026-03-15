@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Orders::UpdateOrder, type: :interactor do
   describe ".with" do
-    let(:order) { create(:order, customer_name: "Old Name", status: :pending) }
+    let(:order) { create(:order, customer_name: "Old Name", status: :in_progress) }
 
     context "with valid params" do
       it "updates the order attributes" do
@@ -12,9 +12,9 @@ RSpec.describe Orders::UpdateOrder, type: :interactor do
       end
 
       it "updates the order status" do
-        updated = described_class.with(id: order.id, params: { status: "confirmed" })
+        updated = described_class.with(id: order.id, params: { status: "completed" })
 
-        expect(updated).to be_confirmed
+        expect(updated).to be_completed
       end
 
       it "returns the updated order" do

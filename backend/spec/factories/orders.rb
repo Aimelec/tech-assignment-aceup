@@ -4,6 +4,6 @@ FactoryBot.define do
     customer_email { Faker::Internet.email }
     description { Faker::Lorem.sentence }
     total_amount { Faker::Commerce.price(range: 10.0..500.0) }
-    status { :pending }
+    status { :in_progress }
   end
 end

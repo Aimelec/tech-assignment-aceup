@@ -2,8 +2,7 @@ require "rails_helper"
 
 RSpec.describe Orders::GetOrderStats, type: :interactor do
   describe ".get" do
-    let!(:pending_orders) { create_list(:order, 2, status: :pending, total_amount: 10.00) }
-    let!(:confirmed_orders) { create_list(:order, 3, status: :confirmed, total_amount: 20.00) }
+    let!(:in_progress_orders) { create_list(:order, 5, status: :in_progress, total_amount: 16.00) }
     let!(:completed_orders) { create_list(:order, 4, status: :completed, total_amount: 30.00) }
     let!(:cancelled_orders) { create_list(:order, 1, status: :cancelled, total_amount: 50.00) }
 
@@ -11,6 +10,10 @@ RSpec.describe Orders::GetOrderStats, type: :interactor do
 
     it "returns the total number of orders" do
       expect(result[:total_orders]).to eq(10)
+    end
+
+    it "returns the number of in progress orders" do
+      expect(result[:in_progress_orders]).to eq(5)
     end
 
     it "returns the number of cancelled orders" do
@@ -21,12 +24,8 @@ RSpec.describe Orders::GetOrderStats, type: :interactor do
       expect(result[:completed_orders]).to eq(4)
     end
 
-    it "returns the number of in progress orders" do
-      expect(result[:in_progress_orders]).to eq(5)
-    end
-
     it "returns the total revenue excluding cancelled orders" do
-      expected = (2 * 10.00) + (3 * 20.00) + (4 * 30.00)
+      expected = (5 * 16.00) + (4 * 30.00)
       expect(result[:total_revenue]).to eq(expected)
     end
 

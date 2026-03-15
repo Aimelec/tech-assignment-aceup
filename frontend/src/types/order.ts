@@ -18,7 +18,7 @@ export interface OrderAttributes {
   customer_email: string
   description: string | null
   total_amount: string
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled'
+  status: 'in_progress' | 'completed' | 'cancelled'
   created_at: string
   updated_at: string
 }

@@ -1,6 +1,6 @@
 module Orders
   class UpdateOrderContract < Dry::Validation::Contract
-    VALID_STATUSES = %w[pending confirmed completed cancelled].freeze
+    VALID_STATUSES = %w[in_progress completed cancelled].freeze
 
     params do
       optional(:customer_name).filled(:string)

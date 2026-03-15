@@ -33,7 +33,7 @@ vi.mock('../../api/orders', () => ({
             customer_email: 'sarah@example.com',
             description: '1x Pepperoni Pizza',
             total_amount: '14.99',
-            status: 'pending',
+            status: 'in_progress',
             created_at: '2026-03-15T00:00:00Z',
             updated_at: '2026-03-15T00:00:00Z',
           },
@@ -68,7 +68,7 @@ describe('OrdersTable', () => {
     renderWithProviders(<OrdersTable />)
 
     expect(await screen.findByText('completed')).toBeInTheDocument()
-    expect(screen.getByText('pending')).toBeInTheDocument()
+    expect(screen.getByText('in_progress')).toBeInTheDocument()
   })
 
   it('opens edit modal, changes status, and submits', async () => {

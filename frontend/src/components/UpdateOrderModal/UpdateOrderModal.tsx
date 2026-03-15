@@ -1,22 +1,9 @@
 import { Modal, TextInput, NumberInput, Textarea, Button, SegmentedControl, Text } from '@mantine/core'
 import { useUpdateOrder } from '../../hooks/useUpdateOrder'
 import { colors } from '../../theme/colors'
-import type { Order, OrderStatus } from '../../types/order'
+import { STATUS_COLORS, STATUSES } from '../../utils/orderStatuses'
+import type { Order } from '../../types/order'
 import styles from './UpdateOrderModal.module.css'
-
-const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending: 'yellow',
-  confirmed: 'blue',
-  completed: 'green',
-  cancelled: 'red',
-}
-
-const STATUSES: { value: OrderStatus; label: string }[] = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'confirmed', label: 'Confirmed' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-]
 
 interface UpdateOrderModalProps {
   order: Order

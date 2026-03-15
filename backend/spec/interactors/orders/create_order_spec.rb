@@ -25,10 +25,10 @@ RSpec.describe Orders::CreateOrder, type: :interactor do
         expect(order.total_amount).to eq(99.99)
       end
 
-      it "sets the default status to pending" do
+      it "sets the default status to in_progress" do
         order = described_class.with(params: params)
 
-        expect(order).to be_pending
+        expect(order).to be_in_progress
       end
 
       it "enqueues a confirmation email job" do

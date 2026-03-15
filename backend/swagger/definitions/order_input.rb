@@ -10,7 +10,7 @@ module Swagger
             customer_email: { type: :string, example: "john@example.com" },
             description: { type: :string, example: "2x Margherita Pizza, 1x Tiramisu" },
             total_amount: { type: :number, example: 99.99 },
-            status: { type: :string, enum: %w[pending confirmed completed cancelled] }
+            status: { type: :string, enum: %w[in_progress completed cancelled] }
           },
           required: %w[customer_name customer_email total_amount]
         }

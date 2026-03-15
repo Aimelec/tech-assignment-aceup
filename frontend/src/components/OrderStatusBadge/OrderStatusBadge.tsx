@@ -1,14 +1,9 @@
 import { Badge } from '@mantine/core'
-
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'yellow',
-  confirmed: 'blue',
-  completed: 'green',
-  cancelled: 'red',
-}
+import { STATUS_COLORS } from '../../utils/orderStatuses'
+import type { OrderStatus } from '../../types/order'
 
 interface OrderStatusBadgeProps {
-  status: string
+  status: OrderStatus
 }
 
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
