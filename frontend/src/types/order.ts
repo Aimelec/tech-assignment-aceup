@@ -39,3 +39,14 @@ export interface OrdersResponse {
   data: Order[]
   meta: PaginationMeta
 }
+
+export interface CreateOrderParams {
+  customer_name: string
+  customer_email: string
+  description: string
+  total_amount: number
+}
+
+export interface CreateOrderResponse {
+  data: Order
+}
