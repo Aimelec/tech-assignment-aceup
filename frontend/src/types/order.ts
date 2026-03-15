@@ -12,3 +12,30 @@ export interface OrderStatsResponse {
     attributes: OrderStats
   }
 }
+
+export interface OrderAttributes {
+  customer_name: string
+  customer_email: string
+  description: string | null
+  total_amount: string
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled'
+  created_at: string
+  updated_at: string
+}
+
+export interface Order {
+  id: string
+  type: 'order'
+  attributes: OrderAttributes
+}
+
+export interface PaginationMeta {
+  current_page: number
+  total_pages: number
+  total_count: number
+}
+
+export interface OrdersResponse {
+  data: Order[]
+  meta: PaginationMeta
+}
