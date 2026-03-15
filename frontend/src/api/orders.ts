@@ -4,6 +4,7 @@ import type {
   OrdersResponse,
   CreateOrderParams,
   CreateOrderResponse,
+  UpdateOrderParams,
 } from '../types/order'
 
 const ORDERS_URL = '/api/orders'
@@ -23,6 +24,13 @@ export const ordersApi = {
 
   create: async (params: CreateOrderParams): Promise<CreateOrderResponse> => {
     const response = await client.post<CreateOrderResponse>(ORDERS_URL, {
+      order: params,
+    })
+    return response.data
+  },
+
+  update: async (id: string, params: UpdateOrderParams): Promise<CreateOrderResponse> => {
+    const response = await client.put<CreateOrderResponse>(`${ORDERS_URL}/${id}`, {
       order: params,
     })
     return response.data

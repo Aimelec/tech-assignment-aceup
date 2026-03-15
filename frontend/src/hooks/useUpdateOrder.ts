@@ -3,37 +3,37 @@ import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { ordersApi } from '../api/orders'
 import { orderValidation } from '../utils/orderValidation'
-import type { CreateOrderParams } from '../types/order'
+import type { Order, UpdateOrderParams } from '../types/order'
 
-export function useCreateOrder(onClose: () => void) {
+export function useUpdateOrder(order: Order, onClose: () => void) {
   const queryClient = useQueryClient()
 
   const form = useForm({
     initialValues: {
-      customer_name: '',
-      customer_email: '',
-      description: '',
-      total_amount: 0,
+      customer_name: order.attributes.customer_name,
+      customer_email: order.attributes.customer_email,
+      description: order.attributes.description ?? '',
+      total_amount: parseFloat(order.attributes.total_amount),
+      status: order.attributes.status,
     },
     validate: orderValidation,
   })
 
   const mutation = useMutation({
-    mutationFn: (params: CreateOrderParams) => ordersApi.create(params),
+    mutationFn: (params: UpdateOrderParams) => ordersApi.update(order.id, params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['orderStats'] })
       notifications.show({
-        title: 'Order created',
-        message: 'A confirmation email has been sent to the customer.',
+        title: 'Order updated',
+        message: 'The order has been updated successfully.',
         color: 'green',
       })
-      form.reset()
       onClose()
     },
     onError: () => {
       notifications.show({
-        title: 'Order failed',
+        title: 'Update failed',
         message: 'Something went wrong. Please try again.',
         color: 'red',
       })

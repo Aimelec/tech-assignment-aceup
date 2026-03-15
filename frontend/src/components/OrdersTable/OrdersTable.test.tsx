@@ -4,10 +4,12 @@ import { renderWithProviders } from '../../test/testUtils'
 import { OrdersTable } from './OrdersTable'
 
 const mockDelete = vi.fn()
+const mockUpdate = vi.fn()
 
 vi.mock('../../api/orders', () => ({
   ordersApi: {
     delete: (...args: unknown[]) => mockDelete(...args),
+    update: (...args: unknown[]) => mockUpdate(...args),
     list: vi.fn().mockResolvedValue({
       data: [
         {
@@ -67,6 +69,35 @@ describe('OrdersTable', () => {
 
     expect(await screen.findByText('completed')).toBeInTheDocument()
     expect(screen.getByText('pending')).toBeInTheDocument()
+  })
+
+  it('opens edit modal, changes status, and submits', async () => {
+    mockUpdate.mockResolvedValue({ data: { id: '1', type: 'order', attributes: {} } })
+
+    renderWithProviders(<OrdersTable />)
+
+    const row = await screen.findByText('John Smith')
+    const tableRow = row.closest('tr')!
+    const editButton = within(tableRow).getAllByRole('button')[0]!
+
+    fireEvent.click(editButton)
+
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).getByText('Edit Order')).toBeInTheDocument()
+    expect(within(dialog).getByLabelText('Customer Name')).toHaveValue('John Smith')
+
+    fireEvent.click(within(dialog).getByText('Cancelled'))
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalledWith('1', {
+        customer_name: 'John Smith',
+        customer_email: 'john@example.com',
+        description: '2x Margherita Pizza',
+        total_amount: 25.98,
+        status: 'cancelled',
+      })
+    })
   })
 
   it('shows confirmation modal and deletes on confirm', async () => {

@@ -1,0 +1,17 @@
+.statusSection {
+  margin-top: var(--mantine-spacing-md);
+}
+
+.statusLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}

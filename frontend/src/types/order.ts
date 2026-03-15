@@ -50,3 +50,13 @@ export interface CreateOrderParams {
 export interface CreateOrderResponse {
   data: Order
 }
+
+export type OrderStatus = OrderAttributes['status']
+
+export interface UpdateOrderParams {
+  customer_name: string
+  customer_email: string
+  description: string
+  total_amount: number
+  status: OrderStatus
+}
