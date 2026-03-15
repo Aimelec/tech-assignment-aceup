@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Button } from '@mantine/core'
+import { colors } from '../theme/colors'
 import { Header } from '../components/Header/Header'
 import { StatsCards } from '../components/StatsCards/StatsCards'
 import { OrdersTable } from '../components/OrdersTable/OrdersTable'
@@ -13,7 +14,7 @@ export function DashboardPage() {
     <>
       <Header
         actions={
-          <Button onClick={() => setModalOpened(true)}>+ New Order</Button>
+          <Button color={colors.secondary} onClick={() => setModalOpened(true)}>+ New Order</Button>
         }
       />
       <div className={styles.content}>

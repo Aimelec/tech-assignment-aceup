@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Table, Pagination, Loader } from '@mantine/core'
 import { useOrders } from '../../hooks/useOrders'
+import { colors } from '../../theme/colors'
 import { OrderRow } from './OrderRow'
 import styles from './OrdersTable.module.css'
 
@@ -37,6 +38,7 @@ export function OrdersTable() {
           total={data.meta.total_pages}
           value={page}
           onChange={setPage}
+          color={colors.primary}
         />
       </div>
     </div>
