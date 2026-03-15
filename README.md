@@ -1,271 +1,135 @@
-# Aceup Tech Assessment
+# AceUp Orders
 
-This repository contains two projects:
-- **frontend/**: React 19 + Vite application
-- **backend/**: Ruby on Rails 7.2 API-only application (Ruby 3.2)
+A fullstack order management system built with Rails 7.2 and React 19.
 
-All services run in Docker using `docker-compose`.
+## Tech Stack
 
-## Prerequisites
+**Backend:** Rails 7.2 (API mode), PostgreSQL, Redis, Sidekiq, RSpec, Swagger (rswag)
+
+**Frontend:** React 19, TypeScript, Mantine v8, TanStack Query, Vitest
+
+**Infrastructure:** Docker Compose (all services containerized)
+
+## Getting Started
+
+### Prerequisites
+
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/)
 
-## Quick Start
-
-1. **Build and start all services:**
+### Setup
 
 ```bash
+# Copy environment files
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+
+# Build and start all services
 make build
+
+# Initialize the database (run in another terminal)
+make db.init
+
+# Start the app
+make start
 ```
 
-2. **Access the apps:**
-- Frontend: [http://localhost:5173](http://localhost:5173)
-- Backend (Rails API): [http://localhost:3000](http://localhost:3000)
+The app will be available at:
 
-3. **Database**
-- Postgres runs in the `db` service.
-- Default credentials (see `docker-compose.yml`):
-  - Host: `db`
-  - Username: `postgres`
-  - Password: `postgres`
-  - Database: `aceup_db`
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3000
+- **Swagger docs:** http://localhost:3000/api-docs
 
-4. **First-time Rails setup** (run in another terminal):
+## Architecture
+
+### Backend — MVCS Pattern
+
+The backend follows a **Model-View-Controller-Service** pattern with clear separation of concerns:
+
+- **Contracts** (`app/contracts/`) — Input validation using dry-validation. Each operation has its own contract that validates params before any business logic runs.
+- **Interactors** (`app/interactors/`) — Business logic layer. Orchestrates validation, persistence, and side effects (e.g., enqueuing email jobs). Controllers stay thin.
+- **Serializers** (`app/serializers/`) — JSON:API compliant responses using jsonapi-serializer.
+- **Services** (`app/services/`) — Infrastructure concerns like email delivery, built with a provider pattern for easy swapping.
+
+### Frontend — Hooks-Driven Architecture
+
+- **Custom hooks** (`src/hooks/`) — Each operation (create, update, delete) has its own hook encapsulating form state, mutations, validation, and notifications.
+- **Shared validation** (`src/utils/orderValidation.ts`) — Form validation rules shared between create and update flows.
+- **Shared constants** (`src/utils/orderStatuses.ts`) — Status colors and labels used across badge and modal components.
+- **Theme system** (`src/theme/`) — Colors defined as a single source of truth in TypeScript, injected as CSS variables via `StyleProvider` for use in both TSX and CSS Modules.
+- **CSS Modules** — Component-scoped styling with no inline CSS.
+
+## Email Confirmation Flow
+
+When a new order is created, the system sends a confirmation email asynchronously:
+
+```
+CreateOrder interactor
+  └── Order.create!
+  └── SendOrderConfirmationJob.perform_later(order.id)     ← enqueued to Sidekiq via Redis
+        └── EmailService.new(provider: MockProvider)
+              └── MockProvider#send_confirmation(order)
+                    └── OrderMailer.confirmation(order).deliver_now
+```
+
+1. The **CreateOrder** interactor validates input via contract, persists the order, and enqueues `SendOrderConfirmationJob` to Sidekiq.
+2. **Sidekiq** picks up the job from Redis and delegates to **EmailService**, which uses a provider pattern — currently a `MockProvider` that calls the mailer directly.
+3. **OrderMailer** renders the confirmation HTML template with order details (customer name, order ID, description, total).
+4. In development, **letter_opener** intercepts delivery and stores the email as an HTML file instead of actually sending it.
+
+The provider pattern makes it straightforward to swap `MockProvider` for a real provider (SendGrid, SES, etc.) without touching the job or interactor.
+
+### Extracting Emails
+
+Emails sent in development are stored by letter_opener inside the backend container. To export them to your machine:
 
 ```bash
-make db.init
+# Export all emails to ./emails/ on your local machine
+make emails.export
+
+# Clear stored emails
+make emails.clear
 ```
 
-## Useful Commands
-
-- **Rebuild images after dependency changes:**
-  ```bash
-  make build
-  ```
-
-- **Start the services:**
-  ```bash
-  make start
-  ```
-
-- **Stop all services:**
-  ```bash
-  make stop
-  ```
-
-- **Go into rails console:**
-  ```bash
-  make rails.c
-  ```
-
-- **Go into bash console:**
-  ```bash
-  make sh
-  ```
-
-- **Run migrations:**
-  ```bash
-  make db.migrate
-  ```
-
-## Exercise for FullStack position
-
-  Following the MVCS pattern (Model, View, Controller, Service), create a very simple order management system.
-
-  **Frontend**
-
-  - Create a Dashboard with at least 1 stat (# of orders created)
-  - Create an order table | New Order button | New Order dialog
-  - Refresh orders after new is created
-
-  **Backend**
-
-  - Orders crud
-  - Send an email after order is created
-
-## Exercise for Backend position; Unified People Sync (CRM + HRM)
-
-## Overview
-
-In this exercise, you will build a small **Ruby on Rails API** that ingests “Person” records coming from two external systems:
-
-- **CRM** (e.g. sales/customer system)
-- **HRM** (e.g. human resources system)
-
-Each system has its own payload structure and is considered an external source of truth for different fields.
-
-Your goal is to **normalize, merge, and persist people data** into a single internal representation while keeping the system clean, scalable, and performant.
-
-This exercise is intentionally scoped to be completed in **4–5 hours**.
-
----
-
-## Goals of the Exercise
-
-We are primarily evaluating:
-
-- Clean, readable, and maintainable code
-- Sound object-oriented design and SOLID principles
-- Appropriate use of design patterns
-- Data modeling and database constraints
-- Performance and scalability considerations
-- Test quality and coverage
-- Ability to explain trade-offs and future improvements
-
----
-
-## Domain Description
-
-### External Systems
-
-You will receive people data from two sources:
-
-#### 1. CRM
-- Represents prospects or customers
-- Example attributes:
-  - `external_id`
-  - `email`
-  - `first_name`
-  - `last_name`
-  - `phone`
-  - `company`
-  - `updated_at`
-
-#### 2. HRM
-- Represents employees
-- Example attributes:
-  - `external_id`
-  - `email`
-  - `first_name`
-  - `last_name`
-  - `job_title`
-  - `department`
-  - `manager_email`
-  - `start_date`
-  - `updated_at`
-
-Payload shapes may differ between systems.
-
-You may define reasonable example payloads yourself.
-
----
-
-## Internal Model
-
-Your application should maintain a unified internal **Person** record.
-
-A Person:
-- Can be sourced from CRM, HRM, or both
-- Should be **deduplicated**
-- Should support **partial updates** from either system
-- Must preserve source-specific identifiers
-
-You are free to design the schema, but you should consider:
-- How people are uniquely identified
-- How external IDs are stored
-- How conflicts between systems are resolved
-- Which fields should be indexed
-
----
-
-## Source of Truth Rules
-
-When the same person exists in both systems, resolve conflicts using the following rules:
-
-- **HRM is the source of truth for:**
-  - `job_title`
-  - `department`
-  - `manager`
-  - `start_date`
-
-- **CRM is the source of truth for:**
-  - `email`
-  - `phone`
-  - `company`
-
-- Shared fields (`first_name`, `last_name`) may come from either system, but your logic should be consistent and deterministic.
-
----
-
-## Functional Requirements
-
-### Ingest Endpoints
-
-Implement the following endpoints:
-
-- `POST /ingest/crm/people`
-- `POST /ingest/hrm/people`
-
-Each endpoint:
-- Accepts JSON payloads (single record or batch)
-- Normalizes incoming data
-- Creates or updates the corresponding Person
-- Is **idempotent** (re-sending the same data must not create duplicates)
-
-### Query Endpoints
-
-Implement:
-
-- `GET /people`
-  - Supports filtering by:
-    - email
-    - source (crm, hrm)
-    - department
-  - Supports pagination
-
-- `GET /people/:id`
-
----
-
-## Technical Requirements
-
-- Ruby on Rails
-- Postgres as the database
-- JSON or JSONB is allowed where appropriate
-- Use database constraints and indexes to enforce integrity
-- Controllers should be thin; business logic should live outside controllers
-- The system should be designed so adding a **new data source** would require minimal changes
-
----
-
-## Testing Requirements
-
-- Include automated tests
-- At minimum:
-  - Unit tests for normalization / merge logic
-  - One request spec per ingest endpoint
-- Tests should be clear and meaningful rather than exhaustive
-
----
-
-## Documentation
-
-Include a `README` section explaining:
-
-- Your overall approach and architecture
-- Key design decisions
-- How deduplication works
-- How conflict resolution is implemented
-- Performance and scalability considerations
-- What you would improve or extend with more time
-
----
-
-## Non-Requirements
-
-- No authentication required
-- No UI required
-- No background jobs required (you may stub or describe them if relevant)
-- No real external API calls
-
----
-
-## Evaluation Notes
-
-We value:
-- Simplicity over over-engineering
-- Clear boundaries and responsibilities
-- Thoughtful trade-offs explained in writing
-- Code that another engineer could confidently extend
-
-Good luck, and feel free to make reasonable assumptions where needed.
+## Testing
+
+```bash
+# Run backend tests (71 specs)
+make test.backend
+
+# Run frontend tests (12 specs)
+make test.frontend
+```
+
+**Backend tests** cover contracts, interactors, models, serializers, and request specs (Swagger-driven).
+
+**Frontend tests** live next to the components they test, with shared utilities in `src/test/`. They cover form validation, mutations, notifications, and user interactions (edit/delete flows).
+
+## CI/CD
+
+GitHub Actions workflows run on every push and PR to `main`:
+
+**Backend CI** (`.github/workflows/backend-ci.yml`)
+- **Lint** — Rubocop
+- **Test** — RSpec against a PostgreSQL + Redis service container
+
+**Frontend CI** (`.github/workflows/frontend-ci.yml`)
+- **Lint** — ESLint
+- **Test** — Vitest
+
+## Make Commands
+
+| Command | Description |
+|---|---|
+| `make build` | Build and start all services |
+| `make start` | Start all services |
+| `make stop` | Stop all services |
+| `make db.init` | Create, migrate, and seed the database |
+| `make db.reset` | Drop, recreate, migrate, and seed the database |
+| `make db.migrate` | Run pending migrations |
+| `make test.backend` | Run RSpec tests |
+| `make test.frontend` | Run Vitest tests |
+| `make emails.export` | Export letter_opener emails to `./emails/` |
+| `make emails.clear` | Clear stored letter_opener emails |
+| `make rails.c` | Open Rails console |
+| `make sh` | Open shell in backend container |

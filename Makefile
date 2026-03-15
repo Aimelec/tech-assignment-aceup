@@ -21,3 +21,20 @@ db.init:
 
 db.migrate:
 	docker-compose run backend bundle exec rake db:migrate
+
+db.reset:
+	docker-compose exec backend rails db:drop db:create db:migrate db:seed
+
+test.backend:
+	docker-compose exec backend rspec
+
+test.frontend:
+	docker-compose exec frontend npx vitest run
+
+emails.export:
+	@mkdir -p ./emails
+	@cp -r ./backend/tmp/letter_opener/* ./emails/ 2>/dev/null && echo "Emails exported to ./emails/" || echo "No emails found"
+
+emails.clear:
+	@rm -rf ./backend/tmp/letter_opener/*
+	@echo "Letter opener emails cleared"
