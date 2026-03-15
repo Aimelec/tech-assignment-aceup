@@ -1,5 +1,6 @@
-import { Modal, TextInput, NumberInput, Textarea, Button } from '@mantine/core'
+import { Modal, TextInput, NumberInput, Textarea, Button, Text } from '@mantine/core'
 import { useCreateOrder } from '../../hooks/useCreateOrder'
+import { colors } from '../../theme/colors'
 import styles from './CreateOrderModal.module.css'
 
 interface CreateOrderModalProps {
@@ -11,7 +12,7 @@ export function CreateOrderModal({ opened, onClose }: CreateOrderModalProps) {
   const { form, mutation, handleSubmit, handleClose } = useCreateOrder(onClose)
 
   return (
-    <Modal opened={opened} onClose={handleClose} title="New Order">
+    <Modal opened={opened} onClose={handleClose} title={<Text fw={600} size="lg">New Order</Text>}>
       <form onSubmit={handleSubmit}>
         <TextInput
           label="Customer Name"
@@ -43,7 +44,7 @@ export function CreateOrderModal({ opened, onClose }: CreateOrderModalProps) {
           <Button variant="default" onClick={handleClose}>
             Cancel
           </Button>
-          <Button type="submit" loading={mutation.isPending}>
+          <Button type="submit" color={colors.primary} loading={mutation.isPending}>
             Create
           </Button>
         </div>

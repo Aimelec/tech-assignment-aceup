@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Table, Pagination, Loader } from '@mantine/core'
+import { Table, Pagination } from '@mantine/core'
 import { useOrders } from '../../hooks/useOrders'
 import { colors } from '../../theme/colors'
 import { OrderRow } from './OrderRow'
 import styles from './OrdersTable.module.css'
+import { OrdersTableSkeleton } from './OrdersTableSkeleton'
 
 const INITIAL_PAGE = 1
 
@@ -11,7 +12,7 @@ export function OrdersTable() {
   const [page, setPage] = useState(INITIAL_PAGE)
   const { data, isLoading } = useOrders(page)
 
-  if (isLoading) return <Loader />
+  if (isLoading) return <OrdersTableSkeleton />
 
   if (!data) return null
 

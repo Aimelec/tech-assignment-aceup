@@ -28,7 +28,7 @@ describe('StatsCards', () => {
     expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText('1')).toBeInTheDocument()
     expect(screen.getByText('5')).toBeInTheDocument()
-    expect(screen.getByText('$200.0')).toBeInTheDocument()
+    expect(screen.getByText('$200.00')).toBeInTheDocument()
   })
 
   it('renders the stat labels', async () => {

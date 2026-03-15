@@ -19,7 +19,7 @@ export function useOrderStats() {
         { label: 'Completed', value: query.data.completed_orders },
         { label: 'Cancelled', value: query.data.cancelled_orders },
         { label: 'In Progress', value: query.data.in_progress_orders },
-        { label: 'Revenue', value: `$${query.data.total_revenue}` },
+        { label: 'Revenue', value: `$${parseFloat(query.data.total_revenue).toFixed(2)}` },
       ]
     : []
 

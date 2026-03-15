@@ -1,11 +1,11 @@
-import { Loader } from '@mantine/core'
 import { useOrderStats } from '../../hooks/useOrderStats'
+import { StatsCardsSkeleton } from './StatsCardsSkeleton'
 import styles from './StatsCards.module.css'
 
 export function StatsCards() {
   const { cards, isLoading } = useOrderStats()
 
-  if (isLoading) return <Loader />
+  if (isLoading) return <StatsCardsSkeleton />
 
   return (
     <div className={styles.grid}>
